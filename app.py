@@ -3,6 +3,8 @@ import time
 from dotenv import find_dotenv, load_dotenv
 from utils import generate_response, get_llm
 from PIL import Image
+import tempfile
+
 
 
 load_dotenv(find_dotenv(),override=True)
@@ -48,7 +50,10 @@ elif choice == "Audio":
    upload = st.button('submit')
    if(upload):
      if uploaded_file is not None:
-       st.write(generate_response(model,choice,audio=uploaded_file))
+       with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as uploadedAudio:
+         uploadedAudio.write(uploaded_file.read())
+         file_path = uploadedAudio.name
+         st.write(generate_response(model,choice,audio_file=file_path))
      else:
           st.warning("Please upload an audio file.")
 else:
